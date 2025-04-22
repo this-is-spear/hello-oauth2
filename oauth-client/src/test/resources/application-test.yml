@@ -1,0 +1,30 @@
+# 테스트 프로필을 위한 설정
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          test-client:
+            client-id: test-client-id
+            client-secret: test-client-secret
+            client-name: Test Client
+            scope: read,write
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            client-authentication-method: client_secret_basic
+            authorization-grant-type: authorization_code
+        provider:
+          test-client:
+            authorization-uri: http://localhost:9000/oauth2/authorize
+            token-uri: http://localhost:9000/oauth2/token
+            user-info-uri: http://localhost:9000/userinfo
+            user-name-attribute: name
+
+resource-service:
+  url: http://localhost:9000
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+    tis.service.oauthclient: DEBUG

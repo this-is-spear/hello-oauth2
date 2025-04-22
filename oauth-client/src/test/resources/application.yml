@@ -1,0 +1,29 @@
+# Test configuration
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          mock-oauth:
+            client-id: test-client-id
+            client-secret: test-client-secret
+            client-name: Test OAuth Client
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            scope: openid,profile,email
+        provider:
+          mock-oauth:
+            authorization-uri: http://localhost:9000/oauth2/authorize
+            token-uri: http://localhost:9000/oauth2/token
+            user-info-uri: http://localhost:9000/userinfo
+            user-name-attribute: sub
+            jwk-set-uri: http://localhost:9000/.well-known/jwks.json
+
+resource-service:
+  url: http://localhost:9000
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+    tis.service.oauthclient: DEBUG

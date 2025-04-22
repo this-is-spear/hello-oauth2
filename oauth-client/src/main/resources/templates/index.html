@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <title>Spring Security - OAuth 2.0 Login</title>
+    <meta charset="utf-8" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        .user-info {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+        }
+        .attributes-list {
+            margin-top: 20px;
+        }
+        .navigation {
+            margin-top: 20px;
+        }
+        .navigation a {
+            display: inline-block;
+            margin-right: 15px;
+            color: #4285f4;
+            text-decoration: none;
+            padding: 8px 12px;
+            border: 1px solid #4285f4;
+            border-radius: 4px;
+        }
+        .navigation a:hover {
+            background-color: #4285f4;
+            color: white;
+        }
+        .logout-section {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+        .logout-btn {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .logout-btn:hover {
+            background-color: #d32f2f;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logout-section" th:fragment="logout" sec:authorize="isAuthenticated()">
+            <span style="font-weight:bold">User: </span><span sec:authentication="name"></span>
+            <form action="#" th:action="@{/logout}" method="post" style="display:inline;">
+                <input type="submit" value="Logout" class="logout-btn" />
+            </form>
+        </div>
+        
+        <h1>OAuth 2.0 Login with Spring Security</h1>
+        
+        <div class="user-info">
+            You are successfully logged in <span style="font-weight:bold" th:text="${userName}"></span>
+            via the OAuth 2.0 Client <span style="font-weight:bold" th:text="${clientName}"></span>
+        </div>
+        
+        <div class="attributes-list">
+            <span style="font-weight:bold">User Attributes:</span>
+            <ul>
+                <li th:each="userAttribute : ${userAttributes}">
+                    <span style="font-weight:bold" th:text="${userAttribute.key}"></span>: <span th:text="${userAttribute.value}"></span>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="navigation">
+            <a href="/profile">프로필 보기</a>
+            <a href="/messages">메시지 보기</a>
+        </div>
+    </div>
+</body>
+</html>

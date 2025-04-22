@@ -1,0 +1,48 @@
+server:
+  port: 9000
+
+spring:
+  application:
+    name: oauth2-authorization-server
+  security:
+    user:
+      name: user
+      password: password
+      roles:
+          - USER
+    oauth2:
+      authorizationserver:
+        issuer: http://localhost:9000
+        client:
+          login-client:
+            registration:
+              client-id: "login-client"
+              client-secret: "{noop}openid-connect"
+              client-authentication-methods:
+                - "client_secret_basic"
+              authorization-grant-types:
+                - "authorization_code"
+                - "refresh_token"
+              redirect-uris:
+                - "https://daa2-183-98-215-159.ngrok-free.app/login/oauth2/code/login-client"
+                - "https://daa2-183-98-215-159.ngrok-free.app/authorized"
+              scopes:
+                - "openid"
+                - "profile"
+                - "user:read"
+                - "message:read"
+                - "message:write"
+
+logging:
+  level:
+    root: INFO
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
+    org.springframework.security.web: DEBUG
+    org.springframework.security.oauth2.server.authorization: TRACE
+    org.springframework.web: DEBUG
+    org.springframework.web.filter: DEBUG
+    org.springframework.web.servlet: DEBUG
+    org.springframework.http: DEBUG
+    tis.service.oauthauthorizationserver: DEBUG
+    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG

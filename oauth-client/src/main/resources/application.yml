@@ -1,0 +1,56 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: oauth2-client-app
+  
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - email
+              - profile
+
+          github:
+            client-id: ${GITHUB_CLIENT_ID}
+            client-secret: ${GITHUB_CLIENT_SECRET}
+            scope:
+              - user:email
+              - read:user
+
+          login-client:
+            provider: spring
+            client-id: login-client
+            client-secret: openid-connect
+            client-authentication-method: client_secret_basic
+            authorization-grant-type: authorization_code
+            redirect-uri: https://daa2-183-98-215-159.ngrok-free.app/login/oauth2/code/login-client
+            scope:
+              - openid
+              - profile
+              - user:read
+              # 여기에 선언한 scope가 authorization server에 등록되지 않으면 예외가 발생한다.
+              - message:read
+              - message:write
+            client-name: this is spear 의 client
+
+        provider:
+          spring:
+            authorization-uri: http://localhost:9000/oauth2/authorize
+            token-uri: http://localhost:9000/oauth2/token
+            jwk-set-uri: http://localhost:9000/oauth2/jwks
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
+    tis.service.oauthclient: DEBUG
+    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
+
+resource-service:
+  url: http://localhost:8082

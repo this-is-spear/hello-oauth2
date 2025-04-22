@@ -1,0 +1,68 @@
+### Variables
+@authServerHost = http://localhost:9000
+@resourceServerHost = http://localhost:8082
+@clientServerHost = http://localhost:8080
+
+### 인증 서버 상태 확인
+GET {{authServerHost}}/.well-known/openid-configuration
+Accept: application/json
+
+## spring secrity oauth2 client 는 인증 서버의 상태를 확인하기 위해 위 API를 호출한다.
+
+### OAuth 클라이언트 인증 (Authorization Code Flow)
+# 1. 브라우저에서 다음 URL을 열고 로그인한 후 인증 코드를 받으세요
+# {{authServerHost}}/oauth2/authorize?response_type=code&client_id=login-client&scope=openid%20profile%20user:read%20message:read%20message:write&state=1-yCzDsZ28BysdBUDJpte0PyZg49qnn85PlK_YelA-c%3D&redirect_uri=http://127.0.0.1:8080/login/oauth2/code/login-client&nonce=lteCvnIEra38rflkTN1Qj3EIksuVX7Q4_Moj-GXdJZ4
+
+## nonce 와 state 값은 어떤 동작을 도와주는걸까?
+
+### 2. 받은 인증 코드로 액세스 토큰 요청
+# code=your_auth_code 부분을 실제 코드로 변경하세요
+POST {{authServerHost}}/oauth2/token
+Content-Type: application/x-www-form-urlencoded
+Authorization: Basic bG9naW4tY2xpZW50Om9wZW5pZC1jb25uZWN0
+
+grant_type=client_credentials&code=5m7pKIOML7bL-YL4Q8Gk5cVJhUx39zkKLmcE9RuQYSfjOPumotJZbKV20u6N9vDOFPdgbWCXILjpZa53y0i_U1UV2Ahpfviu_-Y8Hp4HwpE5_gtbgoKSPU-OuA1lx-PX&redirect_uri=http://127.0.0.1:8080/login/oauth2/code/login-client
+
+## code는 어떤 정보를 담는걸까?
+
+### 3. jwks 조회
+GET {{authServerHost}}/oauth2/jwks
+Content-Type: application/jwk-set+json
+
+## jwks 는 어떤 정보를 담는걸까? 조회시 암호화 관련 정보가 포함된다.
+
+### 3. 액세스 토큰으로 리소스 서버 접근 (메시지 읽기)
+GET {{resourceServerHost}}/api/messages
+Authorization: Bearer your_access_token
+
+### 클라이언트 자격 증명 흐름 (Client Credentials Flow)
+POST {{authServerHost}}/oauth2/token
+Content-Type: application/x-www-form-urlencoded
+Authorization: Basic bWVzc2FnaW5nLWNsaWVudDpzZWNyZXQ=
+
+grant_type=client_credentials&scope=message.read
+
+### 리프레시 토큰으로 액세스 토큰 갱신
+POST {{authServerHost}}/oauth2/token
+Content-Type: application/x-www-form-urlencoded
+Authorization: Basic bWVzc2FnaW5nLWNsaWVudDpzZWNyZXQ=
+
+grant_type=refresh_token&refresh_token=your_refresh_token
+
+### 클라이언트 서버의 홈페이지 접근
+GET {{clientServerHost}}
+Accept: text/html
+
+### 토큰 인트로스펙션 (토큰 검증)
+POST {{authServerHost}}/oauth2/introspect
+Content-Type: application/x-www-form-urlencoded
+Authorization: Basic bWVzc2FnaW5nLWNsaWVudDpzZWNyZXQ=
+
+token=your_access_token&token_type_hint=access_token
+
+### 토큰 취소 요청
+POST {{authServerHost}}/oauth2/revoke
+Content-Type: application/x-www-form-urlencoded
+Authorization: Basic bWVzc2FnaW5nLWNsaWVudDpzZWNyZXQ=
+
+token=your_access_token&token_type_hint=access_token
